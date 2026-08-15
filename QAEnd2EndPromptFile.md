@@ -461,11 +461,11 @@ Expected Result:
 
 STEP 7: Commit to Git Repositroy
  
-Git repor URL: https://github.com/umishra0208/TestAutomation.git
+Git repor URL: https://github.com/umishra-git/End2EndTestAutomation.git
 Prompt:
 Commit all test artifacts to the Git repository using the GitHub MCP server.
 
-Git Repo URL: https://github.com/umishra0208/TestAutomation.git
+Git Repo URL: https://github.com/umishra-git/End2EndTestAutomation.git
 
 Please perform the following Git operations, in order:
 
