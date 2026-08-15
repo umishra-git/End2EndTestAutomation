@@ -173,7 +173,25 @@ I need to perform manual exploratory testing using the Playwright MCP browser to
    navigation, browser back/forward, and note anything unusual even if 
    it's outside the documented test case
 
-4. Document all findings, including:
+4. For the entire story, explicitly exercise all exploratory test categories 
+   below to ensure comprehensive coverage beyond the happy path:
+   - Positive cases: valid data, expected inputs, successful workflows, 
+     standard user journeys, proper navigation, successful confirmation or 
+     submission actions
+   - Negative cases: missing required fields, invalid formats, wrong 
+     credentials, unauthorized access attempts, duplicate entries, failed 
+     validations, malformed data, network issues, and unsupported actions
+   - Boundary value cases: minimum and maximum allowed lengths, extreme 
+     numeric values, edge dates, empty and near-empty strings, largest 
+     supported payloads, maximum item counts, and limits at the threshold
+   - Edge cases: browser refresh/reload, back/forward navigation, multiple 
+     rapid clicks, partial form completion, stale session behavior, locale/
+     timezone variations, disabled states, accessibility focus order, and 
+     UI states after interruption or retries
+   - Record each finding against the relevant category so coverage is 
+     defensible and traceable back to the story requirements
+
+5. Document all findings, including:
    - Test execution results (per test case: status, actual vs expected, 
      timestamp)
    - Any UI inconsistencies (misalignment, broken styling, inconsistent 
@@ -196,6 +214,9 @@ Expected Output
    - Total test cases executed / passed / failed / blocked
    - Overall pass rate (%)
    - Tools used: Playwright MCP browser tools
+   - Exploratory coverage summary: Positive / Negative / Boundary / Edge 
+     cases executed and mapped to the relevant features or user story 
+     requirements
 
 2. Detailed Test Execution Results (per test case, in same order/grouping 
    as the test plan)
@@ -214,22 +235,40 @@ Expected Output
    - Screenshot evidence
    - Related Test Case ID
 
-4. UI Inconsistencies
+4. Exploratory Coverage Matrix
+   - Positive Cases: list of scenarios validated with success status
+   - Negative Cases: list of invalid, blocked, or failed scenarios 
+     encountered with actual result
+   - Boundary Value Checks: list of min/max or threshold validations 
+     performed
+   - Edge Cases: list of unusual, recovery, or resilience scenarios 
+     executed
+   - Coverage gap: any category not executed or not testable, with reason
+
+5. UI Inconsistencies
    - List of visual/UX inconsistencies found (with screenshots), 
      independent of pass/fail status
 
-5. Exploratory Findings (beyond scripted test cases)
+6. Exploratory Findings (beyond scripted test cases)
    - Any additional issues, edge behaviors, or observations found during 
      free-form exploration around each test case
 
-6. Console / Network Errors Log
+7. Console / Network Errors Log
    - Any JavaScript console errors or failed network requests observed 
      during execution, mapped to the test case/page where they occurred
 
-7. Blocked / Not Executed Test Cases
+8. Blocked / Not Executed Test Cases
    - Test Case ID, reason for block, impact on overall coverage
 
-8. Deliverable Confirmation
+9. Review Checklist for Exploratory Testing
+   - Confirm positive, negative, boundary, and edge cases were explicitly 
+     covered across the story
+   - Confirm no feature area is left without at least one exploratory check
+   - Confirm all test findings are mapped to the actual UI behavior and 
+     evidence captured
+   - Confirm any gaps are explicitly documented instead of being assumed away
+
+10. Deliverable Confirmation
    - Execution report saved at: specs/test-execution-report.md
    - All screenshots saved at: specs/execution-screenshots/
 
@@ -264,8 +303,25 @@ Expected Output:
 - All scripts following Playwright best practices (POM/fixtures, proper 
   hooks, web-first assertions, no arbitrary sleeps)
 - Test names traceable back to test plan Test Case IDs
+- Every scenario from the approved test plan, including exploratory 
+  scenarios (Positive, Negative, Boundary, and Edge cases), must be 
+  represented in automation coverage; there must be no unautomated 
+  scenario left behind
+- Coverage must reach 100% of the test plan scope before moving to the 
+  next step. If any scenario remains uncovered, blocked, or explicitly 
+  excluded without justification, the workflow must stop and the gap must 
+  be resolved first
 - A test execution summary confirming initial run results (pass/fail/skip 
   count per browser), with any remaining known issues clearly documented
+
+Closure / Go-No-Go gate for Step 4:
+- Do not proceed to Step 5 until automation coverage is confirmed at 100% 
+  against the Test Plan, including exploratory scenarios
+- Coverage evidence must include a scenario-to-script mapping showing each 
+  Positive, Negative, Boundary, and Edge case is either automated or 
+  explicitly marked as Not Applicable with a valid reason
+- Any unexecuted or unautomated scenario is treated as a release blocker for 
+  progression to the next step
 
 
 Step 5: Execute and Heal Automation Tests
@@ -276,9 +332,13 @@ the playwright-test-healer-agent.
 1. Run all automation scripts in: tests/application-checkout/ across all 
    configured browsers (Chromium, Firefox, WebKit) as defined in 
    playwright.config.js
-2. Capture the full initial run results: total tests, pass count, fail 
+2. Before execution, confirm the automation suite covers 100% of the test
+   plan scope, including all exploratory categories and all documented 
+   scenarios; if coverage is below 100%, stop and address the gap before 
+   proceeding
+3. Capture the full initial run results: total tests, pass count, fail 
    count, skipped count, and execution time — per browser and overall
-3. For every failing test, capture the failure artifacts before healing:
+4. For every failing test, capture the failure artifacts before healing:
    - Error message and stack trace
    - Screenshot at point of failure
    - Trace file / video (if configured)
@@ -323,7 +383,12 @@ the playwright-test-healer-agent.
    previously-passing tests, to catch any regressions introduced by 
    healing changes)
 
-9. Document the full process in: specs/test-healing-report.md, including:
+9. Do not advance to the next workflow step unless the automation coverage is 
+   verified as 100% of the approved Test Plan, including exploratory scenarios; 
+   any remaining unautomated or unvalidated scenario must be treated as a 
+   stop condition and resolved before sign-off
+
+10. Document the full process in: specs/test-healing-report.md, including:
    - Initial test suite results (pass/fail/skip count, per browser)
    - Healing activities performed per test (root cause, fix applied, 
      number of attempts, before/after code snippet)
@@ -461,23 +526,53 @@ Expected Result:
 
 STEP 7: Commit to Git Repositroy
  
-Git repor URL: https://github.com/umishra-git/End2EndTestAutomation.git
+Important Pre-Commit Coverage Gate:
+- Before any git commit or git push, the agent must explicitly confirm with 
+  the user whether the automation coverage is 100% complete as per the 
+  approved test plan.
+- Coverage must include all scenarios from the test plan, including 
+  exploratory Positive, Negative, Boundary, and Edge cases.
+- If the coverage is not 100%, the agent must stop and inform the user that 
+  the workflow cannot proceed to commit/push until the missing scenarios are 
+  either automated or explicitly justified as Not Applicable with a valid 
+  reason.
+- If the coverage is confirmed as 100%, record that confirmation before 
+  staging or pushing any changes.
+
+Important First-Time-Use Rule:
+- If this is the first time the agent is being used in the workspace, do not 
+  assume any Git remote or repository URL.
+- Ask the user to provide the Git repository URL to push the changes.
+- If the user provides a URL, use that exact URL as the remote origin for the
+  repository before any commit or push.
+- Only proceed with pushing after the user has provided and confirmed the Git
+  URL; do not hardcode or assume a repository URL in a first-time setup.
+
 Prompt:
 Commit all test artifacts to the Git repository using the GitHub MCP server.
 
-Git Repo URL: https://github.com/umishra-git/End2EndTestAutomation.git
+Git Repo URL: <to be provided by the user on first use>
 
 Please perform the following Git operations, in order:
 
 1. Verify repository state
    - Check if the local workspace is already a Git repository. If not, 
-     initialize it and set the remote origin to the URL above
+     initialize it and set the remote origin to the URL provided by the user
    - Confirm the correct remote is configured (verify origin URL matches 
      exactly); if a different remote is already set, flag this before 
      proceeding rather than overwriting it silently
    - Confirm which branch is currently checked out
 
-2. Review before staging
+2. Confirm 100% automation coverage before commit
+   - Explicitly tell the user whether the automation coverage is 100% as per 
+     the approved test plan
+   - Include all exploratory categories in the confirmation: Positive, 
+     Negative, Boundary, and Edge cases
+   - If the answer is not 100%, stop the workflow and do not commit or push
+   - If the answer is 100%, proceed only after the user confirms that the 
+     coverage statement is accurate
+
+3. Review before staging
    - List all new, modified, and deleted files in the workspace 
      (git status)
    - Check for a .gitignore file; if one doesn't exist, create one that 
@@ -489,7 +584,7 @@ Please perform the following Git operations, in order:
      containing a Personal Access Token, API key, or GitLab/Atlassian 
      credential used during earlier steps
 
-3. Stage all relevant files, including at minimum:
+4. Stage all relevant files, including at minimum:
    - specs/test-plan.md
    - specs/test-execution-report.md
    - specs/execution-screenshots/
@@ -499,7 +594,7 @@ Please perform the following Git operations, in order:
    - test-results/SCRUM-1010-checkout-test-report.md
    - Any supporting documentation created in Steps 1–6
 
-4. Create a commit with the following message (conventional commit format):
+5. Create a commit with the following message (conventional commit format):
 
    feat(tests): add complete test suite for SCRUM-1010 checkout workflow
 
@@ -515,7 +610,7 @@ Please perform the following Git operations, in order:
 
    Resolves SCRUM-1010
 
-5. Push the commit to the remote repository
+6. Push the commit to the remote repository
    - Push to the current branch, or if project convention requires it, 
      create a feature branch (e.g., feature/scrum-1010-checkout-tests) 
      and push that instead — confirm branch strategy before pushing if 
@@ -523,28 +618,30 @@ Please perform the following Git operations, in order:
    - If the push is rejected (e.g., remote has diverging changes), do 
      not force-push; instead report the conflict and ask how to proceed
 
-6. Verify the push succeeded
+7. Verify the push succeeded
    - Confirm the commit appears on the remote repository (via GitHub MCP 
      tools — check latest commit SHA/branch state on origin)
    - If a pull request is the expected workflow for this repo, note that 
      and optionally open a PR with a summary description instead of 
      pushing directly to main/master
 
-7. Provide a summary of what was committed, including:
+8. Provide a summary of what was committed, including:
    - List of all files added/modified, grouped by category (docs, test 
      scripts, reports, screenshots)
    - Total file count and approximate size
    - Commit SHA and branch pushed to
    - Direct link to the commit/PR on GitHub
    - Confirmation that no secrets/credentials were included in the commit
+   - Confirmation that the user was informed and agreed that automation 
+     coverage is 100% before committing
 
 If any step fails (auth error, push rejection, missing GitHub MCP 
 permissions), stop and report the exact error rather than retrying with 
 elevated or bypassed permissions.
 
 Expected Output:
-- Git repository initialized (if needed) and correctly linked to 
-  https://github.com/umishra0208/TestAutomation.git
+- Git repository initialized (if needed) and correctly linked to the Git URL
+  provided by the user during first-time setup
 - All relevant workspace files staged and committed (secrets/credentials 
   explicitly excluded)
 - A descriptive commit following conventional commit format, referencing 

@@ -33,6 +33,28 @@
 
 ## 3. Test Scenarios
 
+### SCRUM-102 Scenario Coverage Matrix
+The story is focused on the AURA registration landing page reached from the homepage banner. The scenarios below explicitly cover the Discoverability, Content, Form Validation, Consent, Submission, Responsive Layout, and Accessibility requirements from the story.
+
+| Scenario ID | Acceptance Criteria | Category | Priority | Summary |
+| --- | --- | --- | --- | --- |
+| SCRUM-102-001 | AC-1 | Navigation | High | Logo loads and returns to the Sauce Labs homepage. |
+| SCRUM-102-002 | AC-2 | UI Validation | High | Hero text and highlighted CRISIS label appear correctly. |
+| SCRUM-102-003 | AC-3 | Positive | High | Event date/time is visible and reflects the scheduled launch metadata. |
+| SCRUM-102-004 | AC-4 | Positive | High | Value proposition metrics and body copy render without truncation. |
+| SCRUM-102-005 | AC-5 | UI Validation | High | Agenda section displays numbered items in sequential order. |
+| SCRUM-102-006 | AC-6 | Negative | High | Invalid email format triggers validation and keeps values. |
+| SCRUM-102-007 | AC-6 | Negative | High | Empty required fields block submit and show inline errors. |
+| SCRUM-102-008 | AC-6 | Boundary | Medium | Numeric-only or special-character-only first name is handled according to product rules. |
+| SCRUM-102-009 | AC-7 | Positive | High | Consent checkbox is unchecked by default and the Privacy Notice link is functional. |
+| SCRUM-102-010 | AC-7 | UI Validation | High | Consent checkbox toggles correctly with mouse and keyboard interaction. |
+| SCRUM-102-011 | AC-8 | Positive | High | Submit button is present and enabled by default. |
+| SCRUM-102-012 | AC-8 | Negative | High | Empty/invalid submit attempts block submission and keep form data intact. |
+| SCRUM-102-013 | AC-8 | Edge | Medium | Duplicate submission behavior is observed and handled gracefully. |
+| SCRUM-102-014 | AC-9 | UI Validation | High | Desktop and mobile layouts remain readable without overflow. |
+| SCRUM-102-015 | AC-10 | Accessibility | High | Keyboard tab order and focus states are logical across the form. |
+| SCRUM-102-016 | AC-10 | Edge | Medium | Browser refresh, back/forward, and tab re-entry preserve or reset state predictably. |
+
 ### Module A: Page Load and Navigation
 
 #### TC_AURA_001: Landing page loads with core event content
@@ -76,20 +98,6 @@
   - The form is accessible without reloading.
 
 ### Module B: Registration Form Validation
-
-#### TC_AURA_004: Valid email format is accepted by the browser form
-- Category: Happy Path
-- Priority: High
-- Preconditions: Form is loaded.
-- Test Data: Email = test.user@example.com; first name = Jane; last name = Doe.
-- Steps:
-  1. Enter a valid email address in Email Address.
-  2. Enter first and last names.
-  3. Submit the form.
-- Expected Result:
-  - The browser accepts the email format as valid.
-  - No inline error appears for email format.
-  - The form proceeds to the expected next step based on backend behavior.
 
 #### TC_AURA_005: Malformed email triggers inline validation
 - Category: Negative

@@ -3,13 +3,13 @@ import { test, expect } from '@playwright/test';
 test.describe('SauceLabs homepage AURA platform', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('https://saucelabs.com/', { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
   });
 
   test('displays the announcement banner with registration CTA', async ({ page }) => {
     await expect(page.getByText(/Learn about Sauce Labs' AURA platform: live launch event, August 19\./i).first()).toBeVisible();
 
-    const registerLink = page.getByRole('link', { name: /register now/i }).first();
+    const registerLink = page.locator('.top-announcement-banner').getByRole('link', { name: /register now/i }).first();
     await expect(registerLink).toBeVisible();
     await expect(registerLink).toHaveAttribute('href', /260819-meet-aura|register/i);
   });
@@ -41,6 +41,34 @@ test.describe('SauceLabs homepage AURA platform', () => {
     await expect(page.getByText(/90%.*production incidents/i).first()).toBeVisible();
     await expect(page.getByText(/47%.*faster/i).first()).toBeVisible();
     await expect(page.getByText(/38%.*engineering capacity/i).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /^Start Free$/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /^Book a Demo$/i }).first()).toBeVisible();
+  });
+
+  test('navigates to the AURA registration page from the banner CTA', async ({ page }) => {
+    const registerLink = page.locator('.top-announcement-banner').getByRole('link', { name: /register now/i }).first();
+    await expect(registerLink).toBeVisible();
+    await registerLink.click();
+    await expect(page).toHaveURL(/260819-meet-aura/i);
+  });
+
+  test('supports keyboard focus for the primary CTA buttons', async ({ page }) => {
+    const startFree = page.getByRole('link', { name: /^Start Free$/i }).first();
+    const bookDemo = page.getByRole('link', { name: /^Book a Demo$/i }).first();
+
+    await startFree.focus();
+    await expect(startFree).toBeFocused();
+
+    await bookDemo.focus();
+    await expect(bookDemo).toBeFocused();
+  });
+
+  test('remains usable on mobile viewport widths', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByText(/Learn about Sauce Labs' AURA platform/i).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /^Start Free$/i }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /^Book a Demo$/i }).first()).toBeVisible();
   });
