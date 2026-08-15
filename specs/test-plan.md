@@ -1,217 +1,214 @@
-# Test Plan: SauceLabs Homepage – AURA Platform Hero Section
+# Test Plan: SauceLabs AURA Registration Landing Page
 
-## 1. Objective
-Validate that the SauceLabs homepage presents the AURA platform value proposition clearly and provides working calls to action for prospective visitors. This plan targets the production homepage at https://saucelabs.com and is focused on Google Chrome.
+## 1. Test Plan Overview
+- Application URL tested: https://info.saucelabs.com/260819-meet-aura.html
+- Date of exploration: 2026-08-15
+- Browser scope: Chrome only
+- Objective: Validate the event registration landing page for the AURA virtual launch event against the story requirements and confirm that key user journeys, page content, form validation, and privacy/consent behaviors work as expected in the live production environment.
+- Tools used: Playwright browser automation and manual exploratory validation
 
-## 2. Scope
-- Homepage announcement banner
-- Header and navigation behavior
-- AURA hero section content and CTA buttons
-- Responsive layout behavior on key desktop widths
-- Accessibility and keyboard support for major interactive elements
+## 2. Application Exploration Summary
+### Discovered page modules and flows
+- Header/logo navigation with link back to saucelabs homepage
+- Hero banner with event messaging and key value proposition copy
+- Event timeline text showing the VIRTUAL EVENT details
+- Agenda section containing multiple numbered session cards
+- Speaker section with executive profile summaries
+- Registration form card with email, first name, last name, consent checkbox, and submit action
 
-## 3. Test Environment
-- URL: https://saucelabs.com
-- Browser: Chrome
-- Viewports: 1280x720, 1440x900, 1920x1080
-- No login required
+### User flow observed
+1. Visitor lands on event page after clicking Register Now from the SauceLabs homepage.
+2. Visitor reads event details and value proposition.
+3. Visitor scrolls through agenda and presenter information.
+4. Visitor fills the registration form.
+5. Visitor submits or validates required fields in the form.
+6. Visitor can access the privacy notice from the consent checkbox language.
 
-## 4. Test Data
-- Public homepage, no authentication
-- No special test accounts required
-- Use standard browser default settings
+### Key observations from live exploration
+- The page renders on the production URL without authentication.
+- The form uses standard HTML field names: Email, FirstName, LastName, and the consent checkbox named sauceLabsContactConsent.
+- The Privacy Notice link resolves to the Sauce Labs privacy policy.
+- Browser-native validation triggers inline error text for malformed email input, matching the live DOM.
+- The submit button is present and enabled by default; actual back-end submission behavior was not verifiable without a real registration endpoint or success handler.
 
-## 5. Test Cases
+## 3. Test Scenarios
 
-### TC-01: Announcement banner is visible and contains correct text
-**Purpose:** Verify the green promotional banner is displayed and communicates the live event.
+### Module A: Page Load and Navigation
 
-**Steps:**
-1. Open the homepage.
-2. Locate the top announcement banner.
-3. Read the displayed banner text.
+#### TC_AURA_001: Landing page loads with core event content
+- Category: Happy Path
+- Priority: High
+- Preconditions: Browser is open and stable internet connectivity is available.
+- Test Data: None required.
+- Steps:
+  1. Open https://info.saucelabs.com/260819-meet-aura.html
+  2. Wait for the page to finish loading.
+  3. Observe the banner, top navigation, event timestamp, form header, and agenda region.
+- Expected Result:
+  - The page loads successfully.
+  - Event text "VIRTUAL EVENT · AUGUST 19 · 9AM PDT / 12PM EDT" is visible.
+  - The page contains the agenda section and the registration form heading "Save your seat."
+  - The SauceLabs brand/logo is visible in the header.
+- Screenshot Reference: specs/screenshots/aura-registration-page.png
 
-**Expected Results:**
-- The banner is visible near the top of the page.
-- Text matches: “Learn about Sauce Labs' AURA platform: live launch event, August 19.”
-- A REGISTER NOW link is visible.
-- A close button is visible.
+#### TC_AURA_002: Header logo links back to SauceLabs homepage
+- Category: Navigation
+- Priority: High
+- Preconditions: Event page is loaded.
+- Test Data: None required.
+- Steps:
+  1. Click the SauceLabs logo in the header.
+  2. Observe the destination.
+- Expected Result:
+  - The target URL resolves to the SauceLabs homepage.
+  - User returns to the SauceLabs home experience without error.
 
-### TC-02: Register CTA navigates to event page
-**Purpose:** Confirm the event CTA opens the correct registration URL.
+#### TC_AURA_003: Register Now anchor navigates to the form section
+- Category: Navigation
+- Priority: High
+- Preconditions: Page is loaded and header link navigation is available.
+- Test Data: None required.
+- Steps:
+  1. Click the top-level Register Now link in the header.
+  2. Observe the scroll/focus behavior.
+- Expected Result:
+  - The page scrolls or jumps to the registration form section.
+  - The form is accessible without reloading.
 
-**Steps:**
-1. Open the homepage.
-2. Click the REGISTER NOW button.
+### Module B: Registration Form Validation
 
-**Expected Results:**
-- The browser navigates to the event registration page.
-- The route is related to the AURA launch event.
-- The page loads successfully.
+#### TC_AURA_004: Valid email format is accepted by the browser form
+- Category: Happy Path
+- Priority: High
+- Preconditions: Form is loaded.
+- Test Data: Email = test.user@example.com; first name = Jane; last name = Doe.
+- Steps:
+  1. Enter a valid email address in Email Address.
+  2. Enter first and last names.
+  3. Submit the form.
+- Expected Result:
+  - The browser accepts the email format as valid.
+  - No inline error appears for email format.
+  - The form proceeds to the expected next step based on backend behavior.
 
-### TC-03: Banner can be dismissed without page reload
-**Purpose:** Verify banner dismissal behavior.
+#### TC_AURA_005: Malformed email triggers inline validation
+- Category: Negative
+- Priority: High
+- Preconditions: Form is loaded.
+- Test Data: Email = bad-email
+- Steps:
+  1. Enter bad-email into the Email Address field.
+  2. Enter non-empty first and last names.
+  3. Click Submit.
+- Expected Result:
+  - The email field is marked invalid by the browser.
+  - The validation text "Must be valid email." is displayed.
+  - The entered values remain present after validation.
 
-**Steps:**
-1. Open the homepage.
-2. Click the close icon in the banner.
+#### TC_AURA_006: Empty required fields trigger validation and maintain entered values
+- Category: Negative
+- Priority: High
+- Preconditions: Form is loaded.
+- Test Data: First name = Jane; last name = Doe; email left blank.
+- Steps:
+  1. Leave Email Address empty and fill other fields.
+  2. Click Submit.
+  3. Observe field states.
+- Expected Result:
+  - The empty required field is flagged.
+  - Form submission is blocked.
+  - Existing values in other fields are preserved.
 
-**Expected Results:**
-- The banner disappears from the page immediately.
-- The page does not reload.
-- The rest of the page remains visible and stable.
+#### TC_AURA_007: Consent checkbox can be toggled using mouse and keyboard
+- Category: UI Validation
+- Priority: Medium
+- Preconditions: Form is loaded.
+- Test Data: None required.
+- Steps:
+  1. Click the consent checkbox.
+  2. Use keyboard focus to return to it and press Space.
+- Expected Result:
+  - Checkbox toggles checked/unchecked state correctly via mouse and keyboard.
+  - The consent text remains visible and readable.
 
-### TC-04: Dismissed banner does not reappear during session
-**Purpose:** Validate session-level persistence.
+### Module C: Privacy and Consent
 
-**Steps:**
-1. Open the homepage.
-2. Dismiss the banner.
-3. Reload the page or navigate within the same session.
+#### TC_AURA_008: Privacy Notice link is visible and resolves to the privacy policy
+- Category: Navigation
+- Priority: Medium
+- Preconditions: Form is loaded.
+- Test Data: None required.
+- Steps:
+  1. Locate the Privacy Notice text under the checkbox.
+  2. Click the link.
+- Expected Result:
+  - The privacy-policy URL opens in a new tab or page.
+  - The destination matches the Sauce Labs privacy-policy page.
 
-**Expected Results:**
-- The banner does not reappear during the same session.
+### Module D: Layout and Responsive Behavior
 
-### TC-05: Header logo and navigation are visible
-**Purpose:** Verify the main header structure and brand placement.
+#### TC_AURA_009: Desktop layout preserves content hierarchy and spacing
+- Category: UI Validation
+- Priority: Medium
+- Preconditions: Browser viewport set to 1280x1200.
+- Test Data: None required.
+- Steps:
+  1. Load the page on a desktop size.
+  2. Inspect the hero area, agenda, and form card.
+- Expected Result:
+  - Content does not overlap.
+  - Form card remains visually distinct.
+  - Two-column or equivalent layout is stable and readable.
 
-**Steps:**
-1. Open the homepage.
-2. Observe the top-left logo.
-3. Observe the header navigation items.
+#### TC_AURA_010: Tablet/mobile layout stacks without overflow
+- Category: UI Validation
+- Priority: Medium
+- Preconditions: Browser viewport set to 768x1024 and 390x844.
+- Test Data: None required.
+- Steps:
+  1. Resize the page to tablet width.
+  2. Resize to mobile width.
+  3. Inspect the layout and scroll behavior.
+- Expected Result:
+  - Content stacks correctly without horizontal overflow.
+  - The form remains usable and readable.
 
-**Expected Results:**
-- SauceLabs logo is visible.
-- It links to the homepage.
-- The top navigation includes: Why SauceLabs, Products, Solutions, Developers, Resources, Pricing.
-- Login and Book a Demo links are visible.
+### Module E: Accessibility and Non-Functional Checks
 
-### TC-06: Dropdown menus expand correctly
-**Purpose:** Validate navigation submenu behavior.
+#### TC_AURA_011: Keyboard navigation reaches all form controls in logical order
+- Category: UI Validation
+- Priority: High
+- Preconditions: Form is loaded.
+- Test Data: None required.
+- Steps:
+  1. Press Tab repeatedly from the top of the page.
+  2. Navigate through the form controls.
+- Expected Result:
+  - Focus order is logical and visible.
+  - Email, first name, last name, and checkbox are each reachable by keyboard.
 
-**Steps:**
-1. Hover or click each menu item with a dropdown: Why SauceLabs, Products, Solutions, Developers, Resources.
-2. Observe the submenu state.
+#### TC_AURA_012: Browser console and network errors are absent or non-blocking
+- Category: UI Validation
+- Priority: Medium
+- Preconditions: Page is loaded in Chrome.
+- Test Data: None required.
+- Steps:
+  1. Open browser devtools console.
+  2. Load the page and reproduce key interactions.
+- Expected Result:
+  - No critical JavaScript errors stop page rendering.
+  - No blocking network failures occur on primary page load.
 
-**Expected Results:**
-- Each relevant menu item reveals a submenu.
-- The dropdown chevron is visible.
-- Submenu content appears and is usable.
+## 4. Cross-Cutting Observations
+- Accessibility: Live controls are accessible via standard HTML form elements; the registration form supports native validation and keyboard interaction.
+- Console errors: No blocking errors were seen in targeted runtime checks. The page loads cleanly in Chrome during live exploration.
+- Performance: The page loads quickly and renders the main copy and form without obvious delays; no performance issues were observed during this focused test cycle.
 
-### TC-07: Pricing link is direct and does not show a dropdown
-**Purpose:** Validate direct-link navigation behavior.
+## 5. Exploration Limitations / Assumptions
+- The story describes an expected submission confirmation and duplicate-registration handling, but the live form behavior depends on backend processing not exposed in this public page.
+- The “required” status for the marketing consent checkbox is not explicitly enforced by the page; the current implementation treats it as optional from the DOM and browser perspective.
+- The story describes content and styling that may differ slightly from the current production implementation; the live page reflects the actual state at the time of validation.
 
-**Steps:**
-1. Open the homepage.
-2. Locate the Pricing item.
-
-**Expected Results:**
-- Pricing is a direct link.
-- It does not open a dropdown.
-- It navigates to the pricing page.
-
-### TC-08: Login and Book a Demo actions work
-**Purpose:** Verify primary header CTAs.
-
-**Steps:**
-1. Click Login.
-2. Click Book a Demo.
-
-**Expected Results:**
-- Login opens the login/authentication flow.
-- Book a Demo opens the demo request flow.
-- Both actions are accessible and functional.
-
-### TC-09: Hero content appears with correct text
-**Purpose:** Confirm the AURA hero section matches the user story content.
-
-**Steps:**
-1. Scroll to the hero section.
-2. Observe the eyebrow text, heading, and paragraph.
-
-**Expected Results:**
-- Eyebrow text reads: “FROM BUSINESS INTENT TO PRODUCTION CONFIDENCE” or equivalent visible phrasing.
-- Main headline matches: “Verify AI-generated code at the pace it's written.”
-- Supporting text mentions AURA, 90% reduction in incidents, 47% faster shipping, 38% reclaimed engineering capacity, and Selenium/Appium founders credibility.
-
-### TC-10: Start Free CTA is visible and navigates correctly
-**Purpose:** Validate the primary black CTA.
-
-**Steps:**
-1. Locate Start Free in the hero section.
-2. Click it.
-
-**Expected Results:**
-- The button is visible and styled as a primary CTA.
-- It navigates to the sign-up/free trial flow.
-- The destination is appropriate to the story.
-
-### TC-11: Book a Demo CTA is visible and navigates correctly
-**Purpose:** Validate the secondary CTA.
-
-**Steps:**
-1. Locate the hero Book a Demo button.
-2. Click it.
-
-**Expected Results:**
-- The button is visible with an appropriate outline style.
-- It includes the SauceLabs icon.
-- It links to the demo request page.
-
-### TC-12: Keyboard accessibility for CTAs and nav items
-**Purpose:** Validate keyboard support.
-
-**Steps:**
-1. Use Tab and Shift+Tab to move through interactive elements.
-2. Focus the banner CTA, nav buttons, and hero CTAs.
-
-**Expected Results:**
-- Interactive elements are reachable via keyboard.
-- Focus state is visible.
-- Enter/Space activates the link or button correctly.
-
-### TC-13: Hero layout renders correctly at desktop breakpoints
-**Purpose:** Check desktop layout integrity.
-
-**Steps:**
-1. View at 1280x720.
-2. View at 1440x900.
-3. View at 1920x1080.
-
-**Expected Results:**
-- Text does not overlap or truncate.
-- Buttons remain aligned and visible.
-- Layout remains visually consistent.
-
-### TC-14: Responsive behavior on smaller widths
-**Purpose:** Confirm mobile/tablet responsiveness.
-
-**Steps:**
-1. Resize to a tablet width.
-2. Resize to a mobile width.
-
-**Expected Results:**
-- Navigation adapts appropriately.
-- Hero content stacks without overlap.
-- CTA buttons remain usable and readable.
-
-### TC-15: Page performance and browser stability
-**Purpose:** Validate non-functional acceptance criteria.
-
-**Steps:**
-1. Load the page in Chrome.
-2. Observe any console errors or broken network requests.
-
-**Expected Results:**
-- Page loads within acceptable performance thresholds.
-- No major console errors block the page.
-- The primary content renders without critical issues.
-
-## 6. Risk Areas
-- Banner dismissal behavior may use session storage or cookie logic.
-- Dropdown menus may require hover and keyboard support.
-- Hero text and CTAs may be visually sensitive to viewport changes.
-- Performance may be impacted by marketing resources or third-party scripts.
-
-## 7. Exit Criteria
-The homepage passes this plan if all critical user-story acceptance criteria are satisfied in Chrome, and no blocking accessibility or layout issues remain.
+## 6. Deliverable Confirmation
+- Test plan saved at: specs/test-plan.md
+- Screenshots saved under: specs/screenshots/
