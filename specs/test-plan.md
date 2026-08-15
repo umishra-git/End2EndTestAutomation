@@ -209,6 +209,141 @@
 - The “required” status for the marketing consent checkbox is not explicitly enforced by the page; the current implementation treats it as optional from the DOM and browser perspective.
 - The story describes content and styling that may differ slightly from the current production implementation; the live page reflects the actual state at the time of validation.
 
-## 6. Deliverable Confirmation
+## 6. Additional Exploratory Scenarios from Both User Stories
+
+### Cross-Story Journey Scenarios
+
+#### TC_COMBO_001: Homepage Register Now CTA opens the AURA event page correctly
+- Category: Exploratory / Navigation
+- Priority: High
+- Preconditions: Homepage is open in Chrome.
+- Test Data: None.
+- Steps:
+  1. Open the SauceLabs homepage.
+  2. Trigger the green announcement banner CTA.
+  3. Confirm the destination and landing content.
+- Expected Result:
+  - The visitor reaches the event registration page without a broken redirect or dead URL.
+  - Event messaging loads immediately after navigation.
+
+#### TC_COMBO_002: Browser back/forward state is preserved across journey transitions
+- Category: Exploratory / Navigation
+- Priority: Medium
+- Preconditions: Homepage and event page are both accessible.
+- Steps:
+  1. Open the homepage.
+  2. Navigate to the event page.
+  3. Use browser Back and Forward controls.
+- Expected Result:
+  - Content state is preserved without stale data or broken layout.
+  - No anchor or form state is lost unexpectedly.
+
+#### TC_COMBO_003: Form data survives navigation away and back from privacy notice
+- Category: Exploratory / UI Validation
+- Priority: High
+- Preconditions: Event form is partially populated.
+- Steps:
+  1. Fill email, first name, and last name.
+  2. Click Privacy Notice.
+  3. Return to the registration page.
+- Expected Result:
+  - If the app keeps the form state in-session, the values remain available.
+  - If the page resets, the reset is intentional and clearly communicated.
+
+### Homepage Expansion Scenarios
+
+#### TC_HOME_016: Dropdown menus behave correctly on hover and keyboard focus
+- Category: Exploratory / UI Validation
+- Priority: High
+- Steps:
+  1. Hover over Why SauceLabs, Products, Solutions, Developers, and Resources.
+  2. Repeat with keyboard Tab and Enter/Space.
+- Expected Result:
+  - Menus appear and dismiss correctly.
+  - Focus ring is visible and order remains logical.
+
+#### TC_HOME_017: Mobile navigation stays usable and readable at narrow widths
+- Category: Exploratory / Responsive UI
+- Priority: High
+- Steps:
+  1. Resize to mobile widths.
+  2. Open main navigation and inspect CTA buttons.
+- Expected Result:
+  - Navigation remains accessible without clipped text or layout overlap.
+  - Primary actions remain tap-friendly.
+
+#### TC_HOME_018: Hero CTA focus and hover states remain visible
+- Category: Exploratory / Accessibility
+- Priority: Medium
+- Steps:
+  1. Tab to Start Free and Book a Demo.
+  2. Inspect hover and focus styling.
+- Expected Result:
+  - Focus ring is visible and contrast remains accessible.
+  - CTA buttons are clearly visible across states.
+
+### Event Registration Expansion Scenarios
+
+#### TC_AURA_013: Duplicate submission handling is graceful and predictable
+- Category: Exploratory / Negative
+- Priority: High
+- Preconditions: A valid submission path exists or a test environment is available.
+- Steps:
+  1. Submit the same valid email twice.
+  2. Observe the result.
+- Expected Result:
+  - The system either rejects duplicates clearly or treats them as intentional repeat registrations with a defined message.
+
+#### TC_AURA_014: Empty form submission indicates which required fields are missing
+- Category: Exploratory / Negative
+- Priority: High
+- Steps:
+  1. Leave all fields blank.
+  2. Click Submit.
+- Expected Result:
+  - All required fields are explicitly flagged.
+  - No partial or silent acceptance occurs.
+
+#### TC_AURA_015: Validation errors do not wipe previously entered values
+- Category: Exploratory / Negative
+- Priority: High
+- Steps:
+  1. Fill first name and last name correctly.
+  2. Enter an invalid email.
+  3. Submit.
+- Expected Result:
+  - Other valid fields remain populated.
+  - Only the invalid field is corrected by the user.
+
+#### TC_AURA_016: Keyboard-only registration flow works end-to-end
+- Category: Exploratory / Accessibility
+- Priority: High
+- Steps:
+  1. Tab through all controls in order.
+  2. Complete the form using keyboard only.
+- Expected Result:
+  - Focus order is logical and visible.
+  - Checkbox toggles via Space and submission is possible without a mouse.
+
+#### TC_AURA_017: Agenda content completeness across scrolling depth
+- Category: Exploratory / UI Validation
+- Priority: Medium
+- Steps:
+  1. Scroll the full event page.
+  2. Review the agenda and speaker content.
+- Expected Result:
+  - All agenda cards render in the intended order and without missing entries.
+  - The page remains readable without clipping or overlap.
+
+#### TC_AURA_018: Event date accuracy and stale campaign check
+- Category: Exploratory / Business Logic
+- Priority: Medium
+- Steps:
+  1. Compare the displayed date and time with the actual event calendar.
+  2. Review whether the page would still be valid after the event date passes.
+- Expected Result:
+  - The event date is accurate and the page is updated or retired appropriately when the event is past.
+
+## 7. Deliverable Confirmation
 - Test plan saved at: specs/test-plan.md
 - Screenshots saved under: specs/screenshots/

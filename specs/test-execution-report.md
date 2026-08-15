@@ -81,6 +81,14 @@ No functional defects were found during the controlled validation of the current
 ## 7. Blocked / Not Executed Test Cases
 None.
 
-## 8. Deliverable Confirmation
+## 8. Additional Exploratory Scenarios Identified
+The broader test surface across both stories includes the following follow-up validation tracks:
+- Homepage menu keyboard and hover behavior across all navigation groups
+- Session persistence when moving between homepage and event registration flow
+- Duplicate registration and value-retention validation for the event form
+- Keyboard-only completion and screen-reader accessibility checks
+- Event-date staleness and stale promotional-page behavior after the event date passes
+
+## 9. Deliverable Confirmation
 - Execution report saved at: specs/test-execution-report.md
 - Screenshot evidence saved under: specs/screenshots/
